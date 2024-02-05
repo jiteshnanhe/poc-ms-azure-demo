@@ -60,19 +60,19 @@ function CreateUser() {
           <form onSubmit={handleSubmit}>
             <div>
               <label htmlFor='name'><b>Name</b></label>
-              <input type='text' id='name' name='name' onChange={handleChange} required/>
+              <input type='text' id='name' name='name' value={user.name} onChange={handleChange} required/>
             </div>
             <div>
               <label htmlFor='email'><b>Email</b></label>
-              <input type='text' id='email' name='email' onChange={handleChange} required/>
+              <input type='text' id='email' name='email' value={user.email} onChange={handleChange} required/>
             </div>
             <div>
               <label htmlFor='sap-id'><b>SAP ID</b></label>
-              <input type='text' id='sap-id' name='sapid' onChange={handleChange} required/>
+              <input type='text' id='sap-id' name='sapid' value={user.sapid} onChange={handleChange} required/>
             </div>
             <div>
               <label htmlFor='designation'><b>Designation</b></label>
-              <input type='text' id='designation' name='designation' onChange={handleChange} required/>
+              <input type='text' id='designation' name='designation'value={user.designation} onChange={handleChange} required/>
             </div>
             <div>
               <button type='submit' className='registerbtn'>Create</button>
