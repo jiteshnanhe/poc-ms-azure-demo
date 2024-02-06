@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Alert from '@mui/material/Alert';
 // import CheckIcon from '@mui/icons-material/Check';
 import '../App.css';
@@ -13,13 +13,6 @@ function CreateUser() {
   })
   const [success, setSuccess] = useState(false);
   const [failed, setFailed] = useState(false);
-
-  useEffect(() => {
-    axios.get('https://wsdcrud.azurewebsites.net/api/users')
-    .then(response => {
-        console.log('user list -->', response.data);
-    })
-  }, []);
 
   const handleChange = (e) => {
     const {name, value} = e.target;
