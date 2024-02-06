@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Alert from '@mui/material/Alert';
 // import CheckIcon from '@mui/icons-material/Check';
 import '../App.css';
@@ -14,6 +14,13 @@ function CreateUser() {
   const [success, setSuccess] = useState(false);
   const [failed, setFailed] = useState(false);
 
+  useEffect(() => {
+    axios.get('https://wsdcrud.azurewebsites.net/api/users')
+    .then(response => {
+        console.log('user list -->', response.data);
+    })
+  }, []);
+
   const handleChange = (e) => {
     const {name, value} = e.target;
     setUser(prevValue => {
@@ -27,7 +34,7 @@ function CreateUser() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log({user});
-    axios.get('https://wsdcrud.azurewebsites.net/api/users', {...user, partition:'test', id:user.sapid}).then(response => {
+    axios.post('https://wsdcrud.azurewebsites.net/api/users', {...user, partition:'test', id:user.sapid}).then(response => {
       if(response.data.id) {
         setSuccess(true);
       } else {
