@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import BarChart from "../components/barchart";
 import Button from '@mui/material/Button';
@@ -11,10 +11,12 @@ function Dashboard() {
         labels: ['User 1', 'User 2', 'User 3', 'User 4', 'User 5'],
         values: [12, 19, 3, 5, 2],
     };
+    const [usersData, setUsersData] = useState([]);
     useEffect(() => {
         axios.get('https://wsdcrud.azurewebsites.net/api/users')
         .then(response => {
             console.log('user list -->', response.data);
+            setUsersData(response.data);
         })
     }, []);
     const data = [
@@ -32,18 +34,18 @@ function Dashboard() {
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>ID</TableCell>
                                     <TableCell>Name</TableCell>
-                                    <TableCell>Age</TableCell>
+                                    <TableCell>SAP ID</TableCell>
+                                    <TableCell>Designation</TableCell>
                                     <TableCell>Email</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {data.map((row) => (
+                                {usersData?.map((row) => (
                                     <TableRow key={row.id}>
-                                        <TableCell>{row.id}</TableCell>
                                         <TableCell>{row.name}</TableCell>
-                                        <TableCell>{row.age}</TableCell>
+                                        <TableCell>{row.sapId}</TableCell>
+                                        <TableCell>{row.designation}</TableCell>
                                         <TableCell>{row.email}</TableCell>
                                     </TableRow>
                                 ))} 
