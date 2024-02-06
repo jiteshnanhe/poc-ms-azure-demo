@@ -19,9 +19,7 @@ function Dashboard() {
             setUsersData(response.data);
         })
     }, []);
-    const data = [
-        {id:'1', name:'Jitesh', age:'32', email:'j@hcl.com'}
-    ]
+
     return (
         <div style={{display:'flex', justifyContent:'center', flexFlow:'column'}}>
             <h1 style={{textAlign:'center'}}>Welcome to POC Application</h1>
