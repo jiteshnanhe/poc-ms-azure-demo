@@ -12,7 +12,7 @@ const BarChart = ({ data }) => {
         labels: data.labels,
         datasets: [
           {
-            label: 'Bar Chart Example',
+            label: 'Work Items',
             data: data.values,
             backgroundColor: 'rgba(75, 192, 192, 0.2)',
             borderColor: 'rgba(75, 192, 192, 1)',
