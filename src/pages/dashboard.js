@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import BarChart from "../components/barchart";
 // import { useNavigate } from "react-router-dom";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Grid, Box } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Grid, Box, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import '../App.css';
 import PieChart from '../components/pieChart';
@@ -41,6 +41,17 @@ function Dashboard() {
 
     return (
         <>
+            <div style={{display:'flex', justifyContent:'space-between', marginLeft:'20px', marginRight:'20px'}}>
+                <div>
+                    <h1>WORKITEM DASHBOARD</h1>
+                </div>
+                <div style={{display:'flex', alignItems:'center'}}>
+                    <div style={{marginRight:'15px'}}>Welcome, JiteshShankar.nanhe@hcl.com</div>
+                    <div style={{marginLeft:'15px'}}>
+                        <Button variant="outlined">Sign out</Button>
+                    </div>
+                </div>
+            </div>
             <div style={{margin:'20px'}}>
                 <Box sx={{ flexGrow: 1 }}>
                     <Grid container spacing={2}>
@@ -64,28 +75,57 @@ function Dashboard() {
                         </Grid>
                         <Grid item xs={12}>
                             <Item>
-                                <TableContainer component={Paper}>
-                                    <Table>
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell>Name</TableCell>
-                                                <TableCell>SAP ID</TableCell>
-                                                <TableCell>Designation</TableCell>
-                                                <TableCell>Email</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {usersData?.map((row) => (
-                                                <TableRow key={row.id}>
-                                                    <TableCell>{row.name}</TableCell>
-                                                    <TableCell>{row.sapId}</TableCell>
-                                                    <TableCell>{row.designation}</TableCell>
-                                                    <TableCell>{row.email}</TableCell>
+                                <div style={{margin:'20px'}}>
+                                    <h2>Work Items</h2>
+                                    <TableContainer component={Paper}>
+                                        <Table>
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell>ID</TableCell>
+                                                    <TableCell>Title</TableCell>
+                                                    <TableCell>Status</TableCell>
+                                                    <TableCell>Start Date</TableCell>
+                                                    <TableCell>End Date</TableCell>
+                                                    <TableCell>Total hours</TableCell>
                                                 </TableRow>
-                                            ))} 
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
+                                            </TableHead>
+                                            <TableBody>
+                                                {/* {usersData?.map((row) => (
+                                                    <TableRow key={row.id}>
+                                                        <TableCell>{row.name}</TableCell>
+                                                        <TableCell>{row.sapId}</TableCell>
+                                                        <TableCell>{row.designation}</TableCell>
+                                                        <TableCell>{row.email}</TableCell>
+                                                    </TableRow>
+                                                ))}  */}
+                                                <TableRow>
+                                                    <TableCell>101</TableCell>
+                                                    <TableCell>Work Item 1</TableCell>
+                                                    <TableCell>To Do</TableCell>
+                                                    <TableCell>07/02/2024</TableCell>
+                                                    <TableCell>12/02/2024</TableCell>
+                                                    <TableCell>16</TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell>102</TableCell>
+                                                    <TableCell>Work Item 2</TableCell>
+                                                    <TableCell>To Do</TableCell>
+                                                    <TableCell>07/02/2024</TableCell>
+                                                    <TableCell>12/02/2024</TableCell>
+                                                    <TableCell>16</TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell>103</TableCell>
+                                                    <TableCell>Work Item 3</TableCell>
+                                                    <TableCell>To Do</TableCell>
+                                                    <TableCell>07/02/2024</TableCell>
+                                                    <TableCell>12/02/2024</TableCell>
+                                                    <TableCell>16</TableCell>
+                                                </TableRow>
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </div>
                             </Item>
                         </Grid>
                     </Grid>
