@@ -32,7 +32,7 @@ function Dashboard() {
             setUsersData(response.data);
         })
     }, []);
-
+    console.log({usersData});
     // const navigate = useNavigate();
     // const routeChange = () =>{ 
     //     let path = '/createUser'; 
