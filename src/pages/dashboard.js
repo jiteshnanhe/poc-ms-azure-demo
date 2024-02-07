@@ -4,6 +4,7 @@ import BarChart from "../components/barchart";
 // import { useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Grid, Box, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { useIsAuthenticated, useMsal } from "@azure/msal-react";
 import '../App.css';
 import PieChart from '../components/pieChart';
 
@@ -16,6 +17,19 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 function Dashboard() {
+    const isAuthenticated = useIsAuthenticated();
+    const { instance } = useMsal();
+
+    const handleSignIn = () => {
+        instance.loginRedirect({
+            scopes: ['user.read']
+        });
+    }
+
+    const handleSignOut = () => {
+        instance.logoutRedirect();
+    }
+    
     const chartData = {
         labels: ['User 1', 'User 2', 'User 3', 'User 4', 'User 5'],
         values: [12, 19, 3, 5, 2],
@@ -46,10 +60,16 @@ function Dashboard() {
                     <h1>WORKITEM DASHBOARD</h1>
                 </div>
                 <div style={{display:'flex', alignItems:'center'}}>
-                    <div style={{marginRight:'15px'}}>Welcome, JiteshShankar.nanhe@hcl.com</div>
-                    <div style={{marginLeft:'15px'}}>
-                        <Button variant="outlined">Sign out</Button>
-                    </div>
+                    {isAuthenticated ? <div style={{marginRight:'15px'}}>Welcome, JiteshShankar.nanhe@hcl.com</div> : null}
+                    {isAuthenticated ? 
+                        <div style={{marginLeft:'15px'}}>
+                            <Button variant="outlined" onClick={handleSignOut}>Sign out</Button>
+                        </div>
+                    : 
+                        <div style={{marginLeft:'15px'}}>
+                            <Button variant="outlined" onClick={handleSignIn}>Sign In</Button>
+                        </div>
+                    }
                 </div>
             </div>
             <div style={{margin:'20px'}}>
