@@ -16,7 +16,7 @@ const Item = styled(Paper)(({ theme }) => ({
     color: theme.palette.text.secondary,
 }));
 
-function Dashboard() {
+function Dashboard({msalInstance}) {
     const isAuthenticated = useIsAuthenticated();
     const { instance } = useMsal();
 
@@ -46,6 +46,40 @@ function Dashboard() {
             setUsersData(response.data);
         })
     }, []);
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            try {
+              const accounts = msalInstance.getAllAccounts();
+              const accessTokenResponse = await msalInstance.acquireTokenSilent({
+                scopes: ['User.Read'],
+                account: accounts[0],
+              });
+              const accessToken = accessTokenResponse.accessToken;
+              
+              const response = await fetch('https://graph.microsoft.com/v1.0/me', {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              });
+              
+              if (!response.ok) {
+                throw new Error(`Failed to fetch user profile: ${response.statusText}`);
+              }
+      
+              const userProfileData = await response.json();
+              console.log({userProfileData});
+              setUsersData(userProfileData);
+            } catch (error) {
+              console.error('Error fetching user profile:', error);
+            }
+        };
+        fetchUserProfile();
+        // axios.get('https://graph.microsoft.com/v1.0/users')
+        // .then(response => {
+        //     console.log('user list -->', response.data);
+        //     setUsersData(response.data);
+        // })
+    }, [msalInstance]);
     console.log({usersData});
     // const navigate = useNavigate();
     // const routeChange = () =>{ 
