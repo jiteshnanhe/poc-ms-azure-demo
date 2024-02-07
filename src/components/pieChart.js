@@ -1,34 +1,25 @@
 import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
 
-const BarChart = ({ data }) => {
+const PieChart = ({ data }) => {
   const chartRef = useRef();
 
   useEffect(() => {
     const ctx = chartRef.current.getContext('2d');
     const myChart = new Chart(ctx, {
-      type: 'bar',
+      type: 'pie',
       data: {
         labels: data.labels,
         datasets: [
           {
-            label: 'Work Item Count',
             data: data.values,
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1,
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.6)',
+              'rgba(54, 162, 235, 0.6)',
+              'rgba(255, 206, 86, 0.6)',
+            ],
           },
         ],
-      },
-      options: {
-        scales: {
-          x: {
-            beginAtZero: true,
-          },
-          y: {
-            beginAtZero: true,
-          },
-        },
       },
     });
 
@@ -39,9 +30,9 @@ const BarChart = ({ data }) => {
 
   return (
     <div style={{height:'350px'}}>
-      <canvas ref={chartRef} width={500} height={300}></canvas>
+      <canvas ref={chartRef} width={400} height={300}></canvas>
     </div>
   );
 };
 
-export default BarChart;
+export default PieChart;

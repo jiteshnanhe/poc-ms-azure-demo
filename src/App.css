@@ -18,3 +18,22 @@ input[type=text], input[type=email] {
   opacity: 0.9;
   font-size: large;
 }
+
+.item1 { grid-area: header; }
+.item2 { grid-area: menu; }
+
+.grid-container {
+  display: grid;
+  grid-template-areas:
+    'header header header menu menu menu';
+  gap: 10px;
+  background-color: #f4f4f4;
+  padding: 10px;
+}
+
+.grid-container > div {
+  background-color: white;
+  text-align: center;
+  padding: 20px 0;
+  font-size: 30px;
+}
