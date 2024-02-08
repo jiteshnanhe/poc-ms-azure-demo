@@ -29,7 +29,7 @@ const PieChart = ({ data }) => {
   }, [data]);
 
   return (
-    <div style={{height:'350px'}}>
+    <div style={{height:'250px', display:'flex', justifyContent:'center'}}>
       <canvas ref={chartRef} width={400} height={300}></canvas>
     </div>
   );

@@ -5,7 +5,7 @@ import BarChart from "../components/barchart";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Grid, Box, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useIsAuthenticated, useMsal } from "@azure/msal-react";
-import '../App.css';
+import '../styles/dashboard.css';
 import PieChart from '../components/pieChart';
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -16,7 +16,7 @@ const Item = styled(Paper)(({ theme }) => ({
     color: theme.palette.text.secondary,
 }));
 
-function Dashboard({msalInstance}) {
+function Dashboard() {
     const isAuthenticated = useIsAuthenticated();
     const { instance } = useMsal();
 
@@ -31,55 +31,57 @@ function Dashboard({msalInstance}) {
     }
     
     const chartData = {
-        labels: ['User 1', 'User 2', 'User 3', 'User 4', 'User 5'],
-        values: [12, 19, 3, 5, 2],
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        values: [12, 19, 3, 5, 2, 12, 19, 3, 5, 2, 10, 11],
     };
     const pieChartData = {
         labels: ['In Progress', 'To Do', 'Completed'],
         values: [12, 19, 8],
       };
     const [usersData, setUsersData] = useState([]);
+    const [totalWorkItems, setTotalWorkItems] = useState(0);
     useEffect(() => {
-        axios.get('https://wsdcrud.azurewebsites.net/api/users')
+        axios.get('https://cosmosdemo1.azurewebsites.net/api/Items')
         .then(response => {
             console.log('user list -->', response.data);
             setUsersData(response.data);
+            setTotalWorkItems(response.data.length);
         })
     }, []);
-    useEffect(() => {
-        const fetchUserProfile = async () => {
-            try {
-              const accounts = msalInstance.getAllAccounts();
-              const accessTokenResponse = await msalInstance.acquireTokenSilent({
-                scopes: ['User.Read'],
-                account: accounts[0],
-              });
-              const accessToken = accessTokenResponse.accessToken;
+    // useEffect(() => {
+    //     const fetchUserProfile = async () => {
+    //         try {
+    //           const accounts = msalInstance.getAllAccounts();
+    //           const accessTokenResponse = await msalInstance.acquireTokenSilent({
+    //             scopes: ['User.Read'],
+    //             account: accounts[0],
+    //           });
+    //           const accessToken = accessTokenResponse.accessToken;
               
-              const response = await fetch('https://graph.microsoft.com/v1.0/me', {
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                },
-              });
+    //           const response = await fetch('https://graph.microsoft.com/v1.0/me', {
+    //             headers: {
+    //               Authorization: `Bearer ${accessToken}`,
+    //             },
+    //           });
               
-              if (!response.ok) {
-                throw new Error(`Failed to fetch user profile: ${response.statusText}`);
-              }
+    //           if (!response.ok) {
+    //             throw new Error(`Failed to fetch user profile: ${response.statusText}`);
+    //           }
       
-              const userProfileData = await response.json();
-              console.log({userProfileData});
-              setUsersData(userProfileData);
-            } catch (error) {
-              console.error('Error fetching user profile:', error);
-            }
-        };
-        fetchUserProfile();
-        // axios.get('https://graph.microsoft.com/v1.0/users')
-        // .then(response => {
-        //     console.log('user list -->', response.data);
-        //     setUsersData(response.data);
-        // })
-    }, [msalInstance]);
+    //           const userProfileData = await response.json();
+    //           console.log({userProfileData});
+    //           setUsersData(userProfileData);
+    //         } catch (error) {
+    //           console.error('Error fetching user profile:', error);
+    //         }
+    //     };
+    //     fetchUserProfile();
+    //     // axios.get('https://graph.microsoft.com/v1.0/users')
+    //     // .then(response => {
+    //     //     console.log('user list -->', response.data);
+    //     //     setUsersData(response.data);
+    //     // })
+    // }, [msalInstance]);
     console.log({usersData});
     // const navigate = useNavigate();
     // const routeChange = () =>{ 
@@ -87,14 +89,22 @@ function Dashboard({msalInstance}) {
     //     navigate(path);
     // }
 
+    const formatDate = (date) => {
+        const d = new Date(date);
+        const day = d.getDate().toString().padStart(2, '0'); // Get day and pad with leading zero if needed
+        const month = (d.getMonth() + 1).toString().padStart(2, '0'); // Get month (add 1 since month is zero-based) and pad with leading zero if needed
+        const year = d.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+
     return (
         <>
-            <div style={{display:'flex', justifyContent:'space-between', marginLeft:'20px', marginRight:'20px'}}>
+            <div className='header'>
                 <div>
-                    <h1>WORKITEM DASHBOARD</h1>
+                    <h1 className='titleColor'>WORKITEM DASHBOARD</h1>
                 </div>
                 <div style={{display:'flex', alignItems:'center'}}>
-                    {isAuthenticated ? <div style={{marginRight:'15px'}}>Welcome, JiteshShankar.nanhe@hcl.com</div> : null}
+                    {isAuthenticated ? <div className='titleColor' style={{marginRight:'15px'}}>Welcome, JiteshShankar.nanhe@hcl.com</div> : null}
                     {isAuthenticated ? 
                         <div style={{marginLeft:'15px'}}>
                             <Button variant="outlined" onClick={handleSignOut}>Sign out</Button>
@@ -111,9 +121,9 @@ function Dashboard({msalInstance}) {
                     <Grid container spacing={2}>
                         <Grid item xs={3}>
                             <Item>
-                                <div style={{height:'350px'}}>
-                                    <h3 style={{marginTop:0}}>Work Items</h3>
-                                    <div>500</div>
+                                <div style={{height:'250px'}}>
+                                    <h2 style={{margin:0}}>Work Items</h2>
+                                    <div className='totalWorkItems'>{totalWorkItems}</div>
                                 </div>
                             </Item>
                         </Grid>
@@ -144,38 +154,16 @@ function Dashboard({msalInstance}) {
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
-                                                {/* {usersData?.map((row) => (
+                                                {usersData?.map((row) => (
                                                     <TableRow key={row.id}>
-                                                        <TableCell>{row.name}</TableCell>
-                                                        <TableCell>{row.sapId}</TableCell>
-                                                        <TableCell>{row.designation}</TableCell>
-                                                        <TableCell>{row.email}</TableCell>
+                                                        <TableCell>{row.work_item_id}</TableCell>
+                                                        <TableCell>{row.title}</TableCell>
+                                                        <TableCell>{row.status}</TableCell>
+                                                        <TableCell>{formatDate(row.start_Date)}</TableCell>
+                                                        <TableCell>{formatDate(row.end_date)}</TableCell>
+                                                        <TableCell>{row.total_hours}</TableCell>
                                                     </TableRow>
-                                                ))}  */}
-                                                <TableRow>
-                                                    <TableCell>101</TableCell>
-                                                    <TableCell>Work Item 1</TableCell>
-                                                    <TableCell>To Do</TableCell>
-                                                    <TableCell>07/02/2024</TableCell>
-                                                    <TableCell>12/02/2024</TableCell>
-                                                    <TableCell>16</TableCell>
-                                                </TableRow>
-                                                <TableRow>
-                                                    <TableCell>102</TableCell>
-                                                    <TableCell>Work Item 2</TableCell>
-                                                    <TableCell>To Do</TableCell>
-                                                    <TableCell>07/02/2024</TableCell>
-                                                    <TableCell>12/02/2024</TableCell>
-                                                    <TableCell>16</TableCell>
-                                                </TableRow>
-                                                <TableRow>
-                                                    <TableCell>103</TableCell>
-                                                    <TableCell>Work Item 3</TableCell>
-                                                    <TableCell>To Do</TableCell>
-                                                    <TableCell>07/02/2024</TableCell>
-                                                    <TableCell>12/02/2024</TableCell>
-                                                    <TableCell>16</TableCell>
-                                                </TableRow>
+                                                ))}
                                             </TableBody>
                                         </Table>
                                     </TableContainer>

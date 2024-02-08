@@ -38,7 +38,7 @@ const BarChart = ({ data }) => {
   }, [data]);
 
   return (
-    <div style={{height:'350px'}}>
+    <div style={{height:'250px', display:'flex', justifyContent:'center'}}>
       <canvas ref={chartRef} width={500} height={300}></canvas>
     </div>
   );

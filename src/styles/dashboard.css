@@ -1,0 +1,18 @@
+.header {
+    display:flex;
+    justify-content:space-between;
+    margin:0 20px 0 20px;
+}
+
+.titleColor {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.totalWorkItems {
+    font-size: 45px;
+    font-weight: bold;
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
