@@ -39,8 +39,10 @@ function Dashboard({ msalInstance }) {
     }
     
     const chartData = {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        values: [12, 19, 3, 5, 2, 12, 19, 3, 5, 2, 10, 11],
+        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+        borderColor: 'rgba(0,0,0,1)',
+        labels: ['NOV/23', 'OCT/23', 'Dec/23', 'Jan/24', 'Feb/24'],
+        values: [12, 19, 3, 5, 2],
     };
     const pieChartData = {
         labels: ['In Progress', 'To Do', 'Completed'],
