@@ -4,7 +4,8 @@ import BarChart from "../components/barchart";
 // import { useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Grid, Box, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { useIsAuthenticated, useMsal } from "@azure/msal-react";
+import { useIsAuthenticated, useMsal, useMsalAuthentication } from "@azure/msal-react";
+import { InteractionType } from '@azure/msal-browser';
 import '../styles/dashboard.css';
 import PieChart from '../components/pieChart';
 
@@ -16,9 +17,16 @@ const Item = styled(Paper)(({ theme }) => ({
     color: theme.palette.text.secondary,
 }));
 
-function Dashboard() {
+function Dashboard({ msalInstance }) {
     const isAuthenticated = useIsAuthenticated();
     const { instance } = useMsal();
+    const { result, error }= useMsalAuthentication(InteractionType.Popup,{scopes: ['user.read']});
+    const [username, setUsername] = useState("");
+    const [usersData, setUsersData] = useState([]);
+    const [workItems, setWorkItems] = useState([]);
+    const [totalWorkItems, setTotalWorkItems] = useState(0);
+    console.log({ result });
+    console.log({ error });
 
     const handleSignIn = () => {
         instance.loginRedirect({
@@ -38,16 +46,40 @@ function Dashboard() {
         labels: ['In Progress', 'To Do', 'Completed'],
         values: [12, 19, 8],
       };
-    const [usersData, setUsersData] = useState([]);
-    const [totalWorkItems, setTotalWorkItems] = useState(0);
+
     useEffect(() => {
         axios.get('https://cosmosdemo1.azurewebsites.net/api/Items')
         .then(response => {
             console.log('user list -->', response.data);
-            setUsersData(response.data);
+            setWorkItems(response.data);
             setTotalWorkItems(response.data.length);
         })
     }, []);
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            if(result){
+                setUsername(result["account"]["username"]);
+            try {
+                var accessToken = result.accessToken;
+                const response = await fetch('https://graph.microsoft.com/v1.0/users', {
+                    headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    },
+                });           
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch user profile: ${response.statusText}`);
+                }
+                const userProfileData = await response.json();
+                console.log({userProfileData});
+                setUsersData(userProfileData);
+            } catch (error) {
+                console.error('Error fetching user profile:', error);
+            }
+        }
+        };
+        fetchUserProfile();
+    }, [msalInstance,result]);
+    console.log({workItems});
     // useEffect(() => {
     //     const fetchUserProfile = async () => {
     //         try {
@@ -76,11 +108,6 @@ function Dashboard() {
     //         }
     //     };
     //     fetchUserProfile();
-    //     // axios.get('https://graph.microsoft.com/v1.0/users')
-    //     // .then(response => {
-    //     //     console.log('user list -->', response.data);
-    //     //     setUsersData(response.data);
-    //     // })
     // }, [msalInstance]);
     console.log({usersData});
     // const navigate = useNavigate();
@@ -104,7 +131,7 @@ function Dashboard() {
                     <h1 className='titleColor'>WORKITEM DASHBOARD</h1>
                 </div>
                 <div style={{display:'flex', alignItems:'center'}}>
-                    {isAuthenticated ? <div className='titleColor' style={{marginRight:'15px'}}>Welcome, JiteshShankar.nanhe@hcl.com</div> : null}
+                    {isAuthenticated ? <div className='titleColor' style={{marginRight:'15px'}}>Welcome, {username}</div> : null}
                     {isAuthenticated ? 
                         <div style={{marginLeft:'15px'}}>
                             <Button variant="outlined" onClick={handleSignOut}>Sign out</Button>
@@ -154,7 +181,7 @@ function Dashboard() {
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
-                                                {usersData?.map((row) => (
+                                                {workItems?.map((row) => (
                                                     <TableRow key={row.id}>
                                                         <TableCell>{row.work_item_id}</TableCell>
                                                         <TableCell>{row.title}</TableCell>
