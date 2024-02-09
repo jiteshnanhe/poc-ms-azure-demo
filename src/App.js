@@ -4,6 +4,8 @@ import { MsalProvider, useMsal, useIsAuthenticated } from "@azure/msal-react";
 import { InteractionRequiredAuthError } from "@azure/msal-browser";
 import Dashboard from './pages/dashboard';
 import CreateUser from './pages/createUser';
+import EditWorkItem from './pages/editWorkItem';
+import Header from './components/header';
 
 function App({ msalInstance }) {
   const { instance } = useMsal();
@@ -31,9 +33,11 @@ function App({ msalInstance }) {
   return (
     <MsalProvider instance={msalInstance}>
       <Router>
+        <Header />
         <Routes>
           <Route path="/" exact element={<Dashboard />} />
           <Route path="/createUser" element={<CreateUser />} />
+          <Route path="/editWorkItem" element={<EditWorkItem />} />
         </Routes>
       </Router>
     </MsalProvider>

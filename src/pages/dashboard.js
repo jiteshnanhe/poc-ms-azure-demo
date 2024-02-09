@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import BarChart from "../components/barchart";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Grid, Box, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { useIsAuthenticated, useMsal, useMsalAuthentication } from "@azure/msal-react";
-import { InteractionType } from '@azure/msal-browser';
 import '../styles/dashboard.css';
 import PieChart from '../components/pieChart';
 
@@ -17,32 +15,14 @@ const Item = styled(Paper)(({ theme }) => ({
     color: theme.palette.text.secondary,
 }));
 
-function Dashboard({ msalInstance }) {
-    const isAuthenticated = useIsAuthenticated();
-    const { instance } = useMsal();
-    // const navigate = useNavigate();
-    const { result, error }= useMsalAuthentication(InteractionType.Popup,{scopes: ['user.read']});
-    const [username, setUsername] = useState("");
-    const [usersData, setUsersData] = useState([]);
+function Dashboard() {
+    const navigate = useNavigate();
     const [workItems, setWorkItems] = useState([]);
     const [totalWorkItems, setTotalWorkItems] = useState(0);
-    console.log({ result });
-    console.log({ error });
-
-    const handleSignIn = () => {
-        instance.loginRedirect({
-            scopes: ['user.read']
-        });
-    }
-
-    const handleSignOut = () => {
-        instance.logoutRedirect();
-    }
 
     const editWorkItem = (workItem) => {
-        console.log({workItem});
-        // let path = '/editWorkItem'; 
-        // navigate(path);
+        let path = '/editWorkItem'; 
+        navigate(path, { state: workItem });
     }
     
     const chartData = {
@@ -59,71 +39,11 @@ function Dashboard({ msalInstance }) {
     useEffect(() => {
         axios.get('https://cosmosdemo1.azurewebsites.net/api/Items')
         .then(response => {
-            console.log('user list -->', response.data);
             setWorkItems(response.data);
             setTotalWorkItems(response.data.length);
         })
     }, []);
-    useEffect(() => {
-        const fetchUserProfile = async () => {
-            if(result){
-                setUsername(result["account"]["username"]);
-            try {
-                var accessToken = result.accessToken;
-                const response = await fetch('https://graph.microsoft.com/v1.0/users', {
-                    headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    },
-                });           
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch user profile: ${response.statusText}`);
-                }
-                const userProfileData = await response.json();
-                console.log({userProfileData});
-                setUsersData(userProfileData);
-            } catch (error) {
-                console.error('Error fetching user profile:', error);
-            }
-        }
-        };
-        fetchUserProfile();
-    }, [msalInstance,result]);
     console.log({workItems});
-    // useEffect(() => {
-    //     const fetchUserProfile = async () => {
-    //         try {
-    //           const accounts = msalInstance.getAllAccounts();
-    //           const accessTokenResponse = await msalInstance.acquireTokenSilent({
-    //             scopes: ['User.Read'],
-    //             account: accounts[0],
-    //           });
-    //           const accessToken = accessTokenResponse.accessToken;
-              
-    //           const response = await fetch('https://graph.microsoft.com/v1.0/me', {
-    //             headers: {
-    //               Authorization: `Bearer ${accessToken}`,
-    //             },
-    //           });
-              
-    //           if (!response.ok) {
-    //             throw new Error(`Failed to fetch user profile: ${response.statusText}`);
-    //           }
-      
-    //           const userProfileData = await response.json();
-    //           console.log({userProfileData});
-    //           setUsersData(userProfileData);
-    //         } catch (error) {
-    //           console.error('Error fetching user profile:', error);
-    //         }
-    //     };
-    //     fetchUserProfile();
-    // }, [msalInstance]);
-    console.log({usersData});
-    // const navigate = useNavigate();
-    // const routeChange = () =>{ 
-    //     let path = '/createUser'; 
-    //     navigate(path);
-    // }
 
     const formatDate = (date) => {
         const d = new Date(date);
@@ -135,28 +55,6 @@ function Dashboard({ msalInstance }) {
 
     return (
         <>
-            <div className='header'>
-                <div>
-                    <h1 className='titleColor'>WORKITEM DASHBOARD</h1>
-                </div>
-                <div style={{display:'flex', alignItems:'center'}}>
-                    {isAuthenticated ? <div className='titleColor' style={{marginRight:'15px'}}>Welcome, {username}</div> : null}
-                    {isAuthenticated ? 
-                        <>
-                            {/* <div style={{marginLeft:'15px'}}>
-                                <Button variant="outlined" onClick={assignWorkItem}>Assgin Work Item</Button>
-                            </div> */}
-                            <div style={{marginLeft:'15px'}}>
-                                <Button variant="outlined" onClick={handleSignOut}>Sign out</Button>
-                            </div>
-                        </>
-                    : 
-                        <div style={{marginLeft:'15px'}}>
-                            <Button variant="outlined" onClick={handleSignIn}>Sign In</Button>
-                        </div>
-                    }
-                </div>
-            </div>
             <div style={{margin:'20px'}}>
                 <Box sx={{ flexGrow: 1 }}>
                     <Grid container spacing={2}>
@@ -189,6 +87,7 @@ function Dashboard({ msalInstance }) {
                                                     <TableCell>ID</TableCell>
                                                     <TableCell>Title</TableCell>
                                                     <TableCell>Status</TableCell>
+                                                    <TableCell>Assign To</TableCell>
                                                     <TableCell>Start Date</TableCell>
                                                     <TableCell>End Date</TableCell>
                                                     <TableCell>Total hours</TableCell>
@@ -201,6 +100,7 @@ function Dashboard({ msalInstance }) {
                                                         <TableCell>{row.work_item_id}</TableCell>
                                                         <TableCell>{row.title}</TableCell>
                                                         <TableCell>{row.status}</TableCell>
+                                                        <TableCell>{row.workItem_userId}</TableCell>
                                                         <TableCell>{formatDate(row.start_Date)}</TableCell>
                                                         <TableCell>{formatDate(row.end_date)}</TableCell>
                                                         <TableCell>{row.total_hours}</TableCell>
@@ -220,44 +120,6 @@ function Dashboard({ msalInstance }) {
                     </Grid>
                 </Box>
             </div>
-            {/* <div style={{display:'flex', justifyContent:'center', flexFlow:'column'}}>
-                <div style={{backgroundColor:'#5678b5', color:'white', display:'flex', justifyContent:'space-between', paddingRight:'20px', paddingLeft:'20px'}}>
-                    <h1 style={{textAlign:'center'}}>Welcome to WSD POC</h1>
-                    <div style={{display:'flex', alignItems:'center'}}>
-                        <button onClick={routeChange} style={{padding:'15px', margin:'15px', backgroundColor:'white', border:'none', borderRadius:'5px', cursor:'pointer'}}>Create User</button>
-                        <button style={{padding:'15px', margin:'15px', backgroundColor:'white', border:'none', borderRadius:'5px'}}>Sign In</button>
-                    </div>
-                </div>
-                <div style={{display:'flex', justifyContent:'space-around', marginTop:'50px'}}>
-                    <div style={{width:'40%'}}>
-                        <BarChart data={chartData} />
-                    </div>
-                    <div style={{width:'40%'}}>
-                        <TableContainer component={Paper}>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>SAP ID</TableCell>
-                                        <TableCell>Designation</TableCell>
-                                        <TableCell>Email</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {usersData?.map((row) => (
-                                        <TableRow key={row.id}>
-                                            <TableCell>{row.name}</TableCell>
-                                            <TableCell>{row.sapId}</TableCell>
-                                            <TableCell>{row.designation}</TableCell>
-                                            <TableCell>{row.email}</TableCell>
-                                        </TableRow>
-                                    ))} 
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </div>              
-                </div>
-            </div> */}
         </>
     )
 }
