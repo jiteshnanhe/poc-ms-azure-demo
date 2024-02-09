@@ -20,6 +20,7 @@ const Item = styled(Paper)(({ theme }) => ({
 function Dashboard({ msalInstance }) {
     const isAuthenticated = useIsAuthenticated();
     const { instance } = useMsal();
+    // const navigate = useNavigate();
     const { result, error }= useMsalAuthentication(InteractionType.Popup,{scopes: ['user.read']});
     const [username, setUsername] = useState("");
     const [usersData, setUsersData] = useState([]);
@@ -36,6 +37,12 @@ function Dashboard({ msalInstance }) {
 
     const handleSignOut = () => {
         instance.logoutRedirect();
+    }
+
+    const editWorkItem = (workItem) => {
+        console.log({workItem});
+        // let path = '/editWorkItem'; 
+        // navigate(path);
     }
     
     const chartData = {
@@ -135,9 +142,14 @@ function Dashboard({ msalInstance }) {
                 <div style={{display:'flex', alignItems:'center'}}>
                     {isAuthenticated ? <div className='titleColor' style={{marginRight:'15px'}}>Welcome, {username}</div> : null}
                     {isAuthenticated ? 
-                        <div style={{marginLeft:'15px'}}>
-                            <Button variant="outlined" onClick={handleSignOut}>Sign out</Button>
-                        </div>
+                        <>
+                            {/* <div style={{marginLeft:'15px'}}>
+                                <Button variant="outlined" onClick={assignWorkItem}>Assgin Work Item</Button>
+                            </div> */}
+                            <div style={{marginLeft:'15px'}}>
+                                <Button variant="outlined" onClick={handleSignOut}>Sign out</Button>
+                            </div>
+                        </>
                     : 
                         <div style={{marginLeft:'15px'}}>
                             <Button variant="outlined" onClick={handleSignIn}>Sign In</Button>
@@ -180,6 +192,7 @@ function Dashboard({ msalInstance }) {
                                                     <TableCell>Start Date</TableCell>
                                                     <TableCell>End Date</TableCell>
                                                     <TableCell>Total hours</TableCell>
+                                                    <TableCell>Action</TableCell>
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
@@ -191,6 +204,11 @@ function Dashboard({ msalInstance }) {
                                                         <TableCell>{formatDate(row.start_Date)}</TableCell>
                                                         <TableCell>{formatDate(row.end_date)}</TableCell>
                                                         <TableCell>{row.total_hours}</TableCell>
+                                                        <TableCell>
+                                                            <div>
+                                                                <Button variant="outlined" onClick={()=>editWorkItem(row)}>Edit</Button>
+                                                            </div>
+                                                        </TableCell>
                                                     </TableRow>
                                                 ))}
                                             </TableBody>
