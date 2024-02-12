@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-// import { useLocation, useNavigate } from 'react-router-dom';
+// import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 // import { useMsalAuthentication } from "@azure/msal-react";
 // import { InteractionType } from '@azure/msal-browser';
 // import Alert from '@mui/material/Alert';
@@ -18,22 +18,36 @@ const Item = styled(Paper)(({ theme }) => ({
     color: theme.palette.text.secondary,
 }));
 
-function EditWorkItem({msalInstance}) {
+function WorkItem({msalInstance}) {
     const location = useLocation();
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     // const { result } = useMsalAuthentication(InteractionType.Popup,{scopes: ['user.read']});
-    const workItemData = location.state;
+    console.log({ location });
+    const workItemData = location.state?.data;
+    const create = location.state?.page === 'create';
+    const newWorkItem = {
+        workItemId: '',
+        title: '',
+        status: '',
+        userId: '',
+        startDate: '',
+        endDate: '',
+        totalHours: ''
+        
+    };
+    const existingWorkItem = {
+        id: workItemData?.id,
+        workItemId: workItemData?.work_item_id,
+        title: workItemData?.title,
+        status: workItemData?.status,
+        userId: workItemData?.workItem_userId,
+        startDate: workItemData?.start_Date,
+        endDate: workItemData?.end_date,
+        totalHours: workItemData?.total_hours
+    }
+    const initialWorkItem = create ? newWorkItem : existingWorkItem;
     console.log({ workItemData });
-    const [workItem, setWorkItem] = useState({
-        id: workItemData.id,
-        workItemId: workItemData.work_item_id,
-        title: workItemData.title,
-        status: workItemData.status,
-        userId: workItemData.workItem_userId,
-        startDate: workItemData.start_Date,
-        endDate: workItemData.end_date,
-        totalHours: workItemData.total_hours
-    })
+    const [workItem, setWorkItem] = useState(initialWorkItem)
     const [usersData, setUsersData] = useState([]);
     console.log({ usersData });
     // const [success, setSuccess] = useState(false);
@@ -107,6 +121,10 @@ function EditWorkItem({msalInstance}) {
         // let path = '/'; 
         // navigate(path);
     }
+
+    const backToHome = () => {
+        navigate('/');
+    }
     return(
         <div style={{margin:'20px'}}>
             <Grid item xs={12}>
@@ -126,7 +144,7 @@ function EditWorkItem({msalInstance}) {
                                 }
                             </div> */}
                             <div>
-                                <h2 style={{textAlign:'left'}}>Work Item</h2>
+                                <h2 style={{textAlign:'left'}}>{create? 'Create' : 'Update'} Work Item</h2>
                                 <hr />
                             </div>
                             <div>
@@ -155,7 +173,7 @@ function EditWorkItem({msalInstance}) {
                                         <option value='User 1'>User 1</option>
                                         <option value='User 2'>User 2</option>
                                         <option value='User 2'>User 3</option>
-                                        {usersData?.map(user => {
+                                        {usersData?.value?.map(user => {
                                             return <option value={user.displayName}>{user.displayName}</option>
                                         })}
                                     </select>
@@ -173,7 +191,12 @@ function EditWorkItem({msalInstance}) {
                                     <input type='text' id='totalHours' name='totalHours'value={workItem.totalHours} onChange={handleChange} required/>
                                 </div>
                                 <div>
-                                    <button type='submit' className='registerbtn'>Update</button>
+                                    <button type='submit' className='registerbtn'>
+                                        {create? 'Create' : 'Update'}
+                                    </button>
+                                    <button className='registerbtn' onClick={backToHome}>
+                                        Back To Home
+                                    </button>
                                 </div>
                             </form>
                             </div>
@@ -185,4 +208,4 @@ function EditWorkItem({msalInstance}) {
     );
 }
 
-export default EditWorkItem;
+export default WorkItem;

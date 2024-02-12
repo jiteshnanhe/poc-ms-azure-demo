@@ -20,9 +20,13 @@ function Dashboard() {
     const [workItems, setWorkItems] = useState([]);
     const [totalWorkItems, setTotalWorkItems] = useState(0);
 
-    const editWorkItem = (workItem) => {
-        let path = '/editWorkItem'; 
-        navigate(path, { state: workItem });
+    const workItem = (workItem) => {
+        let path = '/workItem'; 
+        navigate(path, { state: { data: workItem, page:'edit' }});
+    }
+    const createWorkItem = () => {
+        let path = '/workItem'; 
+        navigate(path, { state: { page:'create' }});
     }
     
     const chartData = {
@@ -42,6 +46,11 @@ function Dashboard() {
             setWorkItems(response.data);
             setTotalWorkItems(response.data.length);
         })
+
+        // axios.get('https://wsdcrudapi.azurewebsites.net/api/items')
+        // .then(response => {
+        //     console.log('items data -->', response.data);
+        // })
     }, []);
     console.log({workItems});
 
@@ -79,7 +88,14 @@ function Dashboard() {
                         <Grid item xs={12}>
                             <Item>
                                 <div style={{margin:'20px'}}>
-                                    <h2>Work Items</h2>
+                                    <div style={{ display:'flex', justifyContent:'space-between'}}>
+                                        <div>
+                                            <h2>Work Items</h2>
+                                        </div>
+                                        <div style={{display:'flex', alignItems:'center'}}>
+                                            <Button variant="outlined" onClick={()=>createWorkItem()}>Create Work Item</Button>
+                                        </div>
+                                    </div>
                                     <TableContainer component={Paper}>
                                         <Table>
                                             <TableHead>
@@ -106,7 +122,7 @@ function Dashboard() {
                                                         <TableCell>{row.total_hours}</TableCell>
                                                         <TableCell>
                                                             <div>
-                                                                <Button variant="outlined" onClick={()=>editWorkItem(row)}>Edit</Button>
+                                                                <Button variant="outlined" onClick={()=>workItem(row)}>Edit</Button>
                                                             </div>
                                                         </TableCell>
                                                     </TableRow>
