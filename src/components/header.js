@@ -8,9 +8,11 @@ function Header() {
     const isAuthenticated = useIsAuthenticated();
     const { instance } = useMsal();
     const { result } = useMsalAuthentication(InteractionType.Popup,{scopes: ['user.read']});
+    console.log({ result });
     useEffect(() => {
         if(result){
             setUsername(result["account"]["username"]);
+            localStorage.setItem('accessToken', result.accessToken);
         }
     }, [result]);
     const handleSignIn = () => {
