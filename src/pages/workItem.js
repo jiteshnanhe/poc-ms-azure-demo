@@ -201,9 +201,6 @@ function WorkItem({msalInstance}) {
                                     <label htmlFor='workItem_userId'><b>Assign To</b></label>
                                     <select name='workItem_userId' id='workItem_userId' value={workItem.workItem_userId} onChange={handleChange}>                         
                                         <option value=''>Select</option>
-                                        <option value='User 1'>User 1</option>
-                                        <option value='User 2'>User 2</option>
-                                        <option value='User 2'>User 3</option>
                                         {usersData?.value?.map(user => {
                                             return <option value={user.displayName}>{user.displayName}</option>
                                         })}
