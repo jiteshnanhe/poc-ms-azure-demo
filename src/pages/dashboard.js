@@ -41,7 +41,7 @@ function Dashboard() {
       };
 
     useEffect(() => {
-        axios.get('https://cosmosdemo1.azurewebsites.net/api/Items')
+        axios.get('https://wsdcrud.azurewebsites.net/api/items')
         .then(response => {
             setWorkItems(response.data);
             setTotalWorkItems(response.data.length);

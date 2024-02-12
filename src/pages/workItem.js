@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 // import { useMsalAuthentication } from "@azure/msal-react";
 // import { InteractionType } from '@azure/msal-browser';
-// import Alert from '@mui/material/Alert';
+import Alert from '@mui/material/Alert';
 // import CheckIcon from '@mui/icons-material/Check';
 import { Paper, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
@@ -25,30 +25,45 @@ function WorkItem({msalInstance}) {
     console.log({ location });
     const workItemData = location.state?.data;
     const create = location.state?.page === 'create';
-    const newWorkItem = {
-        workItemId: '',
+    const newWorkItem = {        
+        name: '',
+        description: '',
+        email: '',
+        desgnation: '',
+        sapid: '',
         title: '',
+        workItem_userId: '',
         status: '',
-        userId: '',
-        startDate: '',
-        endDate: '',
-        totalHours: ''
-        
+        type: '',
+        role: '',
+        work_item_id: '',
+        start_Date: '',
+        end_date: '',
+        total_hours: ''  
     };
     const existingWorkItem = {
         id: workItemData?.id,
-        workItemId: workItemData?.work_item_id,
+        name: workItemData?.name,
+        description: workItemData?.description,
+        email: workItemData?.email,
+        desgnation: workItemData?.desgnation,
+        sapid: workItemData?.sapid,
         title: workItemData?.title,
+        workItem_userId: workItemData?.workItem_userId,
         status: workItemData?.status,
-        userId: workItemData?.workItem_userId,
-        startDate: workItemData?.start_Date,
-        endDate: workItemData?.end_date,
-        totalHours: workItemData?.total_hours
+        type: workItemData?.type,
+        role: workItemData?.role,
+        work_item_id: workItemData?.work_item_id,
+        start_Date: workItemData?.start_Date,
+        end_date: workItemData?.end_date,
+        total_hours: workItemData?.total_hours,  
     }
     const initialWorkItem = create ? newWorkItem : existingWorkItem;
     console.log({ workItemData });
     const [workItem, setWorkItem] = useState(initialWorkItem)
     const [usersData, setUsersData] = useState([]);
+    const [success, setSuccess] = useState(false);
+    const [failed, setFailed] = useState(false);
     console.log({ usersData });
     // const [success, setSuccess] = useState(false);
     // const [failed, setFailed] = useState(false);
@@ -107,10 +122,26 @@ function WorkItem({msalInstance}) {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log({workItem});
-        axios.put('https://cosmosdemo1.azurewebsites.net/api/Items', {workItem})
-        .then(response => {
-            console.log({ response });
-        })
+        if(create){
+            axios.post('https://wsdcrud.azurewebsites.net/api/items', {...workItem, id:''})
+            .then(response => {
+                if(response.data.id) {
+                    setSuccess(true);
+                } else {
+                    setFailed(true);
+                }
+            })
+        } else {
+            axios.put(`https://wsdcrud.azurewebsites.net/api/items/${workItem.id}}`, {...workItem})
+            .then(response => {
+                console.log({ response });
+                if(response.status === '204') {
+                    setSuccess(true);
+                } else {
+                    setFailed(true);
+                }
+            })
+        }
         // axios.post('https://wsdcrud.azurewebsites.net/api/users', {...user, partition:'test', id:user.sapid}).then(response => {
         //   if(response.data.id) {
         //     setSuccess(true);
@@ -131,10 +162,10 @@ function WorkItem({msalInstance}) {
                 <Item>
                     <div style={{display:'flex', justifyContent:'center'}}>
                         <div style={{width:'40%'}}>
-                            {/* <div>
+                            <div>
                                 {success ? (
                                     <Alert severity="success">
-                                        Work Item Updated Successfully
+                                        Work Item {create? 'Created' :'Updated'} Successfully
                                     </Alert>) : null
                                 }
                                 {failed ? (
@@ -142,7 +173,7 @@ function WorkItem({msalInstance}) {
                                         Something went wrong!
                                     </Alert>) : null
                                 }
-                            </div> */}
+                            </div>
                             <div>
                                 <h2 style={{textAlign:'left'}}>{create? 'Create' : 'Update'} Work Item</h2>
                                 <hr />
@@ -150,8 +181,8 @@ function WorkItem({msalInstance}) {
                             <div>
                             <form onSubmit={handleSubmit} style={{textAlign:'left'}}>
                                 <div>
-                                    <label htmlFor='workItemId'><b>Work Item ID</b></label>
-                                    <input type='text' id='workItemId' name='workItemId' value={workItem.workItemId} onChange={handleChange} required/>
+                                    <label htmlFor='work_item_id'><b>Work Item ID</b></label>
+                                    <input type='text' id='work_item_id' name='work_item_id' value={workItem.work_item_id} onChange={handleChange} required/>
                                 </div>
                                 <div>
                                     <label htmlFor='title'><b>Title</b></label>
@@ -167,8 +198,8 @@ function WorkItem({msalInstance}) {
                                     </select>
                                 </div>
                                 <div>
-                                    <label htmlFor='userId'><b>Assign To</b></label>
-                                    <select name='userId' id='userId' value={workItem.userId} onChange={handleChange}>                         
+                                    <label htmlFor='workItem_userId'><b>Assign To</b></label>
+                                    <select name='workItem_userId' id='workItem_userId' value={workItem.workItem_userId} onChange={handleChange}>                         
                                         <option value=''>Select</option>
                                         <option value='User 1'>User 1</option>
                                         <option value='User 2'>User 2</option>
@@ -179,16 +210,20 @@ function WorkItem({msalInstance}) {
                                     </select>
                                 </div>
                                 <div>
-                                    <label htmlFor='startDate'><b>Start Date</b></label>
-                                    <input type='text' id='startDate' name='startDate'value={workItem.startDate} onChange={handleChange} required/>
+                                    <label htmlFor='start_Date'><b>Start Date</b></label>
+                                    <input type='text' id='start_Date' name='start_Date'value={workItem.start_Date} onChange={handleChange} required/>
                                 </div>
                                 <div>
-                                    <label htmlFor='endDate'><b>End Date</b></label>
-                                    <input type='text' id='endDate' name='endDate'value={workItem.endDate} onChange={handleChange} required/>
+                                    <label htmlFor='end_date'><b>End Date</b></label>
+                                    <input type='text' id='end_date' name='end_date'value={workItem.end_date} onChange={handleChange} required/>
                                 </div>
                                 <div>
-                                    <label htmlFor='totalHours'><b>Total Hours</b></label>
-                                    <input type='text' id='totalHours' name='totalHours'value={workItem.totalHours} onChange={handleChange} required/>
+                                    <label htmlFor='total_hours'><b>Total Hours</b></label>
+                                    <input type='text' id='total_hours' name='total_hours'value={workItem.total_hours} onChange={handleChange} required/>
+                                </div>
+                                <div>
+                                    <label htmlFor='description'><b>Description</b></label>
+                                    <input type='text' id='description' name='description'value={workItem.description} onChange={handleChange} required/>
                                 </div>
                                 <div>
                                     <button type='submit' className='registerbtn'>
