@@ -100,29 +100,29 @@ function Dashboard() {
                                         <Table>
                                             <TableHead>
                                                 <TableRow>
-                                                    <TableCell>ID</TableCell>
+                                                    {/* <TableCell>ID</TableCell> */}
                                                     <TableCell>Title</TableCell>
                                                     <TableCell>Status</TableCell>
                                                     <TableCell>Assign To</TableCell>
                                                     <TableCell>Start Date</TableCell>
                                                     <TableCell>End Date</TableCell>
-                                                    <TableCell>Total hours</TableCell>
-                                                    <TableCell>Action</TableCell>
+                                                    {/* <TableCell>Total hours</TableCell> */}
+                                                    <TableCell></TableCell>
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
                                                 {workItems?.map((row) => (
                                                     <TableRow key={row.id}>
-                                                        <TableCell>{row.work_item_id}</TableCell>
+                                                        {/* <TableCell>{row.work_item_id}</TableCell> */}
                                                         <TableCell>{row.title}</TableCell>
                                                         <TableCell>{row.status}</TableCell>
                                                         <TableCell>{row.workItem_userId}</TableCell>
                                                         <TableCell>{formatDate(row.start_Date)}</TableCell>
                                                         <TableCell>{formatDate(row.end_date)}</TableCell>
-                                                        <TableCell>{row.total_hours}</TableCell>
+                                                        {/* <TableCell>{row.total_hours}</TableCell> */}
                                                         <TableCell>
                                                             <div>
-                                                                <Button variant="outlined" onClick={()=>workItem(row)}>Edit</Button>
+                                                                <Button variant="outlined" onClick={()=>workItem(row)}>Action</Button>
                                                             </div>
                                                         </TableCell>
                                                     </TableRow>
